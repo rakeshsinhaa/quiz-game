@@ -1,0 +1,27 @@
+.quiz-container {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+h2 {
+  margin-top: 0;
+}
+
+#options button {
+  display: block;
+  margin: 10px 0;
+  padding: 10px;
+  background-color: blue;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.green {
+  background-color: green;
+}
+
+.red {
+  background-color: red;
+}

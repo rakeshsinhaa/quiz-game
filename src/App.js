@@ -41,12 +41,12 @@ const questions = {
   ],
 };
 
-const App = () => {
+function App() {
   const [currentLevel, setCurrentLevel] = useState(1);
-  const [points, setPoints] = useState(0);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [isGameOver, setIsGameOver] = useState(false);
+  const [points, setPoints] = useState(0);
   const [highestScore, setHighestScore] = useState(0);
+  const [isGameOver, setIsGameOver] = useState(false);
   const [unlockedLevels, setUnlockedLevels] = useState([1]);
 
   useEffect(() => {
@@ -66,18 +66,32 @@ const App = () => {
     }
   };
 
-  const handleAnswer = (option) => {
-    const isCorrect = option === questions[currentLevel][currentQuestionIndex].answer;
+  const handleAnswer = (isCorrect) => {
     if (isCorrect) {
-      setPoints(points + getPointsForLevel(currentLevel));
+      setPoints(prevPoints => prevPoints + getPointsForLevel(currentLevel));
     } else if (currentLevel === 5) {
-      setPoints(points - 2);
+      setPoints(prevPoints => prevPoints - 2);
     }
 
     if (currentQuestionIndex + 1 < questions[currentLevel].length) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setCurrentQuestionIndex(prevIndex => prevIndex + 1);
     } else {
       checkLevelUnlock();
+    }
+  };
+
+  const checkLevelUnlock = () => {
+    const requiredPoints = getRequiredPointsForNextLevel(currentLevel);
+    if (points >= requiredPoints) {
+      if (currentLevel < 5) {
+        setUnlockedLevels(prevLevels => [...prevLevels, currentLevel + 1]);
+        setCurrentLevel(prevLevel => prevLevel + 1);
+        setCurrentQuestionIndex(0);
+      } else {
+        setIsGameOver(true);
+      }
+    } else {
+      setIsGameOver(true);
     }
   };
 
@@ -92,63 +106,31 @@ const App = () => {
     }
   };
 
-  const checkLevelUnlock = () => {
-    const requiredPoints = getRequiredPointsForNextLevel(currentLevel);
-
-    if (currentLevel < 5) {
-      if (points >= requiredPoints) {
-        setUnlockedLevels([...unlockedLevels, currentLevel + 1]);
-        setCurrentLevel(currentLevel + 1);
-        setCurrentQuestionIndex(0);
-      } else {
-        setIsGameOver(true);
-      }
-    } else if (currentLevel === 5) {
-      if (points >= 70) {
-        setIsGameOver(true);
-      } else {
-        setIsGameOver(true);
-      }
-    }
-  };
-
   const handleRestart = () => {
     setCurrentLevel(1);
-    setPoints(0);
     setCurrentQuestionIndex(0);
+    setPoints(0);
     setIsGameOver(false);
     setUnlockedLevels([1]);
   };
 
   return (
     <div className="container">
-      <Sidebar
-        points={points}
-        highestScore={highestScore}
-        currentLevel={currentLevel}
-        unlockedLevels={unlockedLevels}
-      />
-      <div className="quiz-container">
-        {isGameOver && (currentLevel === 5 && points < 70) ? (
-          <div className="game-over">
-            <p className="game-over-text">Better luck next time!</p>
-            <button className="restart-button" onClick={handleRestart}>Restart Game</button>
-          </div>
-        ) : isGameOver ? (
-          <div className="game-over">
-            <p className="game-over-text">Game Over!</p>
-            <button className="restart-button" onClick={handleRestart}>Restart Game</button>
-          </div>
-        ) : (
-          <Level
-            level={currentLevel}
-            question={questions[currentLevel][currentQuestionIndex]}
-            onAnswer={handleAnswer}
-          />
-        )}
-      </div>
+      <Sidebar points={points} highestScore={highestScore} unlockedLevels={unlockedLevels} />
+      {isGameOver ? (
+        <div className="game-over">
+          <h2>{points >= getRequiredPointsForNextLevel(currentLevel) ? 'Congratulations! You won the game!' : 'Better luck next time!'}</h2>
+          <button onClick={handleRestart} className="restart-button">Restart Game</button>
+        </div>
+      ) : (
+        <Level
+          level={currentLevel}
+          question={questions[currentLevel][currentQuestionIndex]}
+          onAnswer={handleAnswer}
+        />
+      )}
     </div>
   );
-};
+}
 
 export default App;

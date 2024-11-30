@@ -7,10 +7,21 @@ const Level = ({ level, question, onAnswer }) => {
   const handleAnswerClick = (option) => {
     if (selectedOption) return;
     setSelectedOption(option);
+
+    const isCorrect = option === question.answer;
+    const button = document.querySelector(`#option-${question.options.indexOf(option)}`);
+    
+    if (isCorrect) {
+      button.style.backgroundColor = 'green';
+    } else {
+      button.style.backgroundColor = 'red';
+    }
+
     setTimeout(() => {
-      onAnswer(option);
+      onAnswer(isCorrect);
       setSelectedOption(null);
-    }, 1000);
+      button.style.backgroundColor = ''; // Reset button color after moving to the next question
+    }, 500); // 1-second delay to show the correct/incorrect answer
   };
 
   return (
@@ -21,6 +32,7 @@ const Level = ({ level, question, onAnswer }) => {
         {question.options.map((option, index) => (
           <button
             key={index}
+            id={`option-${index}`}
             onClick={() => handleAnswerClick(option)}
             className={selectedOption === option ? (option === question.answer ? 'green' : 'red') : ''}
           >

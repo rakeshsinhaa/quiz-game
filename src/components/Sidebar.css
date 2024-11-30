@@ -1,0 +1,19 @@
+.side-panel {
+  width: 200px;
+  background-color: #333;
+  color: #fff;
+  padding: 20px;
+}
+
+.side-panel h3 {
+  margin: 0 0 10px;
+}
+
+.side-panel ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.side-panel ul li {
+  margin: 5px 0;
+}

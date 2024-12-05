@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import './Level.css';
 
@@ -43,5 +44,4 @@ const Level = ({ level, question, onAnswer }) => {
     </div>
   );
 };
-
 export default Level;

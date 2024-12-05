@@ -1,3 +1,4 @@
+
 import React from 'react';
 import './Sidebar.css';
 
@@ -18,3 +19,4 @@ const Sidebar = ({ points, unlockedLevels, highestScore, currentLevel }) => {
 };
 
 export default Sidebar;
+
